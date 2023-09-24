@@ -1,0 +1,20 @@
+.body {
+  background-color: var(--tg-theme-bg-color, #fff);
+  color: var(--tg-theme-text-color, #000);
+}
+a {
+  color: var(--tg-theme-link-color, blue);
+}
+a:visited {
+  filter: brightness(85%);
+}
+.secondary-bg {
+  background-color: var(--tg-theme-secondary-bg-color, #eee);
+}
+.button {
+  background-color: var(--tg-theme-button-color);
+  color: var(--tg-theme-button-text-color);
+}
+.hint {
+  color: var(--tg-theme-hint-color);
+}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Telegram Catalog</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="/static/styles.css" rel="stylesheet" />
+  </head>
+
+  <body class="body">
+    <h1 class="title">بسم الله الرحمن الرحيم</h1>
+  </body>
+
+  <script type="text/javascript">
+    Telegram.WebApp.ready();
+    Telegram.WebApp.MainButton.setText("Done")
+      .show()
+      .onClick(function () {
+        const data = JSON({
+          dataToSend: "Hello World!",
+        });
+        Telegram.WebApp.sendData(data);
+        Telegram.WebApp.close();
+      });
+  </script>
+</html>
