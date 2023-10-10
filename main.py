@@ -7,26 +7,47 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from telegram import Update
+from telegram import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    KeyboardButton,
+    ReplyKeyboardMarkup,
+    Update,
+    MenuButtonWebApp,
+    WebAppInfo,
+)
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 load_dotenv()
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]
-PORT = os.environ.get("PORT", 5000)
+PORT = int(os.environ.get("PORT", 5000))
+WEB_APP_URL = os.environ["WEB_APP_URL"]
 
 tg_app = ApplicationBuilder().token(os.environ["BOT_TOKEN"]).build()
+tg_web_app = WebAppInfo(WEB_APP_URL)
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_message(
-        chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!"
-    )
+    if update.message and update.effective_chat:
+        # Inline button
+        keyboard = [[InlineKeyboardButton("Start App", web_app=tg_web_app)]]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await update.message.reply_text(
+            "Welcome to the catalog, to see our products click one of the buttons.",
+            reply_markup=reply_markup,
+        )
+
+        # menu button
+        menu_button_web_app = MenuButtonWebApp("Start App", tg_web_app)
+        await context.bot.set_chat_menu_button(
+            chat_id=update.effective_chat.id, menu_button=menu_button_web_app
+        )
 
 
 start_handler = CommandHandler("start", start)
 tg_app.add_handler(start_handler)
-
+# add MenuButtonWebApp
 
 web_app = FastAPI()
 web_app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -52,11 +73,13 @@ web_server = uvicorn.Server(
 async def main():
     async with tg_app:
         await tg_app.start()
-        await tg_app.updater.start_polling()
+        if tg_app.updater:
+            await tg_app.updater.start_polling()
         # Start other asyncio frameworks here
         await web_server.serve()
         # Stop the other asyncio frameworks here
-        await tg_app.updater.stop()
+        if tg_app.updater:
+            await tg_app.updater.stop()
         await tg_app.stop()
 
 

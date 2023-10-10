@@ -9,19 +9,17 @@
   </head>
 
   <body class="body">
-    <h1 class="title">بسم الله الرحمن الرحيم</h1>
+    <h1 class="title">Sample webapp</h1>
   </body>
 
   <script type="text/javascript">
     Telegram.WebApp.ready();
-    Telegram.WebApp.MainButton.setText("Done")
-      .show()
-      .onClick(function () {
-        const data = JSON({
-          dataToSend: "Hello World!",
-        });
-        Telegram.WebApp.sendData(data);
-        Telegram.WebApp.close();
-      });
+    Telegram.WebApp.MainButton.setParams({
+      text: "Done",
+      is_active: true,
+      is_visible: true,
+    }).onClick(() => {
+      Telegram.WebApp.close();
+    });
   </script>
 </html>
